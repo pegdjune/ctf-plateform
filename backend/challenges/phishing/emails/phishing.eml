@@ -1,0 +1,29 @@
+// emails/phishing.eml
+From: accounts@company-portal.com
+To: employee@victim-company.com
+Subject: Urgent: Account Password Reset Required
+Date: Tue, 15 Jan 2024 10:23:15 -0500
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="boundary-string"
+
+--boundary-string
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+Dear Employee,
+
+Our security system has detected unusual activity on your account.
+Please login immediately to verify your identity and reset your password:
+http://company-portal.evil.com/
+
+Regards,
+IT Security Team
+
+--boundary-string
+Content-Type: application/msword
+Content-Disposition: attachment; filename="Invoice.doc"
+Content-Transfer-Encoding: base64
+
+[Base64 encoded malicious macro document]
+
+--boundary-string--

@@ -1,0 +1,119 @@
+{
+    "title": "SSH Pivoting via Web Injection",
+    "description": "Un challenge de pivoting réseau exploitant une injection de code sur une application web, suivie d'une persistance SSH et d'un pivot pour accéder à une base de données protégée.",
+    "difficulty": "hard",
+    "category": "offensive",
+    "points": 500,
+    "flag": "FLAG{1n1t14L_4cc3ss_LFI_2024}",
+    "mitreTechnique": {
+        "techniqueID": "T1021",
+        "tacticID": "TA0008",
+        "name": "Remote Services"
+    },
+    "scenario": {
+        "context": {
+            "networks": [
+                {"name": "web", "description": "Reseau contenant les serveurs web publics"},
+                {"name": "admin", "description": "Zone d'administration sécurisée"},
+                {"name": "db", "description": "Zone base de données isolée"}
+            ],
+            "authorizedFlows": [
+                {"from": "web", "to": "admin", "protocol": "SSH"},
+                {"from": "admin", "to": "db", "port": 3306}
+            ]
+        },
+        "phases": [
+            {
+                "phase": 1,
+                "name": "Compromission initiale",
+                "description": "Exploitation d'une vulnérabilité d'injection de code sur l'application web",
+                "actions": [
+                    "Injection de code malveillant",
+                    "Upload de la paire de clés SSH",
+                    "Installation dans authorized_keys"
+                ],
+                "mitreTechniques": [
+                    {
+                        "techniqueID": "T1190",
+                        "tacticID": "TA0001",
+                        "name": "Exploit Public-Facing Application"
+                    },
+                    {
+                        "techniqueID": "T1059",
+                        "tacticID": "TA0002",
+                        "name": "Command and Script Interpreter"
+                    }
+                ]
+            },
+            {
+                "phase": 2,
+                "name": "Établissement de la persistance",
+                "description": "Configuration de l'accès SSH permanent",
+                "actions": [
+                    "Connexion SSH avec la clé privée",
+                    "Reconnaissance des configurations SSH",
+                    "Identification des flux réseau"
+                ],
+                "mitreTechniques": [
+                    {
+                        "techniqueID": "T1098.004",
+                        "tacticID": "TA0003",
+                        "name": "SSH Authorized Keys"
+                    },
+                    {
+                        "techniqueID": "T1046",
+                        "tacticID": "TA0007",
+                        "name": "Network Service Scanning"
+                    }
+                ]
+            },
+            {
+                "phase": 3,
+                "name": "Pivot et tunneling",
+                "description": "Création du tunnel SSH pour accéder à la base de données",
+                "actions": [
+                    "Exploitation de la connexion SSH automatique",
+                    "Configuration du tunnel SSH",
+                    "Redirection du port 3306"
+                ],
+                "mitreTechniques": [
+                    {
+                        "techniqueID": "T1021.004",
+                        "tacticID": "TA0008",
+                        "name": "Remote Services: SSH"
+                    },
+                    {
+                        "techniqueID": "T1572",
+                        "tacticID": "TA0011",
+                        "name": "Protocol Tunneling"
+                    }
+                ]
+            }
+        ],
+        "detectionMeasures": [
+            {
+                "category": "System",
+                "measures": [
+                    "Surveillance des modifications authorized_keys",
+                    "Détection des connexions SSH suspectes",
+                    "Monitoring des tunnels SSH"
+                ]
+            },
+            {
+                "category": "Network",
+                "measures": [
+                    "Détection des flux inter-zones inhabituels",
+                    "Analyse des logs de connexion SSH",
+                    "Surveillance des accès base de données"
+                ]
+            }
+        ]
+    },
+    "vmConfig": {
+        "image": "ctf/pst-web:latest",
+        "image2": "ctf/pst-admin:latest",
+        "image1": "ctf/pst-db:latest",
+        "ports": [22, 80]
+    }
+}
+

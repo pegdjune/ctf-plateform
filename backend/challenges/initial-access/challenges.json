@@ -1,0 +1,68 @@
+{
+    "title": "Web Archaeologist",
+    "description": "Une application web confidentielle a été déployée sur un serveur interne. En tant que pentesteur, votre mission est d'exploiter une vulnérabilité de type LFI (Local File Inclusion) pour accéder à des fichiers sensibles. Votre objectif est de récupérer le flag caché dans /opt/flag.txt.",
+    "difficulty": "easy",
+    "category": "offensive",
+    "points": 200,
+    "flag": "FLAG{1n1t14L_4cc3ss_LFI_2024}",
+    "mitreTechnique": {
+        "techniqueID": "T1190",
+        "tacticID": "TA0001",
+        "name": "Exploit Public-Facing Application",
+        "link": "https://attack.mitre.org/techniques/T1190/",
+        "phase": "Initial Access"
+    },
+    "vmConfig": {
+        "image": "ctf/initial-access:latest",
+        "ports": [80],
+        "resources": {
+            "memory": "512M",
+            "cpu": "1"
+        },
+        "environment": {
+            "DEBIAN_FRONTEND": "noninteractive"
+        }
+    },
+    "hints": [
+        {
+            "id": 1,
+            "text": "Regardez comment l'application traite les fichiers inclus",
+            "cost": 50
+        },
+        {
+            "id": 2,
+            "text": "La traversée de répertoire peut être utile",
+            "cost": 100
+        }
+    ],
+    "validation": {
+        "type": "exact_match",
+        "case_sensitive": true
+    },
+    "metadata": {
+        "author": "CTF Team",
+        "version": "1.0",
+        "created_at": "2024-01-08",
+        "estimated_time": "30m",
+        "prerequisites": ["Basic Web", "PHP basics"],
+        "tags": ["web", "lfi", "php", "initial-access"]
+    },
+    "rewards": {
+        "completion": 200,
+        "first_blood": 50,
+        "speed_bonus": {
+            "time": "10m",
+            "points": 25
+        }
+    },
+    "files": {
+        "dockerfile": "/challenges/initial-access/Dockerfile",
+        "source_code": "/challenges/initial-access/src/",
+        "solution": "/challenges/initial-access/solution.md"
+    },
+    "learning_objectives": [
+        "Comprendre les vulnérabilités LFI",
+        "Exploitation de chemins relatifs en PHP",
+        "Techniques d'Initial Access via des applications web"
+    ]
+}

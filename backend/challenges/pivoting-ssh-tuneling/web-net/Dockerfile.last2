@@ -1,0 +1,27 @@
+# Utiliser Ubuntu comme base
+FROM ubuntu:20.04
+
+# Mettre à jour le système et installer Apache, PHP et SSH
+RUN apt-get update && \
+    apt-get install -y apache2 php libapache2-mod-php openssh-server && \
+    apt-get clean
+
+# Copier le fichier PHP vulnérable dans le répertoire web d'Apache
+COPY index.php /var/www/html/
+
+# Créer le dossier de logs et ajouter des fichiers de test
+RUN mkdir /var/www/html/logs && \
+    echo "Accès utilisateur réussi à 12:00" > /var/www/html/logs/access.log && \
+    echo "Erreur 404 à 13:00" > /var/www/html/logs/error.log
+
+# Configurer le serveur SSH
+RUN mkdir /var/run/sshd
+
+# Définir un mot de passe pour le root à des fins de tests
+RUN echo 'root:changeme' | chpasswd
+
+# Exposer le port 80 pour le serveur web et 22 pour SSH
+EXPOSE 80 22
+
+# Démarrer le service SSH et Apache lorsque le conteneur est lancé
+CMD service ssh start && apache2ctl -D FOREGROUND

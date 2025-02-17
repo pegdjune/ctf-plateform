@@ -1,0 +1,3 @@
+BACKUP_INTERVAL=5
+BACKUP_RETENTION=7
+PATH=/usr/local/bin:/usr/bin:/bin

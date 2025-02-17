@@ -1,0 +1,11 @@
+cd challenges/phishing
+docker build -t ctf/phishing-challenge .
+
+cd ../persistence
+docker build -t ctf/persistence-challenge .
+
+cd ../privesc
+docker build -t ctf/privesc-challenge .
+
+
+node scripts/seedChallenges.js

