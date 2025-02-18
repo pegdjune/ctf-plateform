@@ -441,12 +441,25 @@ app.post('/api/instances/create', async (req, res) => {
         const containerName1 = generateContainerName(userId + '1', challengeId);
         const containerName2 = generateContainerName(userId +'2', challengeId);
         const exposedPorts = {};
-        const portBindings = {};
+        const portBindings = {
+            '80/tcp': [{ HostPort: '8080' }],
+            '22/tcp': [{ HostPort: '2222' }],
+        };
+
+        const portBindings1 = {
+            '80/tcp': [{ HostPort: '8081' }],
+            '22/tcp': [{ HostPort: '2223' }],
+        };
+
+        const portBindings2 = {
+            '80/tcp': [{ HostPort: '8082' }],
+            '22/tcp': [{ HostPort: '2224' }],
+        };
 
         // Configurer les ports à exposer
         ports.forEach(port => {
             exposedPorts[`${port}/tcp`] = {};
-            portBindings[`${port}/tcp`] = [{ HostPort: '0' }]; // Port dynamique
+            // portBindings[`${port}/tcp`] = [{ HostPort: '0' }]; // Port dynamique
         });
 
         const volume = await docker.createVolume({
@@ -508,7 +521,7 @@ app.post('/api/instances/create', async (req, res) => {
             name: containerName1,
             ExposedPorts: exposedPorts,
             HostConfig: {
-                PortBindings: portBindings,
+                PortBindings: portBindings1,
                 Memory: 512 * 1024 * 1024, // 512MB limite de mémoire
                 NanoCPUs: 1000000000, // 1 CPU
                 SecurityOpt: ['no-new-privileges'],
@@ -532,7 +545,7 @@ app.post('/api/instances/create', async (req, res) => {
             name: containerName2,
             ExposedPorts: exposedPorts,
             HostConfig: {
-                PortBindings: portBindings,
+                PortBindings: portBindings2,
                 Memory: 512 * 1024 * 1024, // 512MB limite de mémoire
                 NanoCPUs: 1000000000, // 1 CPU
                 SecurityOpt: ['no-new-privileges'],

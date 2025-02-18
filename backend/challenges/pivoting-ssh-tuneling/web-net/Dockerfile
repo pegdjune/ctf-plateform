@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y \
     supervisor \
     libapache2-mod-php \
     mysql-client \
+    mysql-server \
     nmap \
     curl \
     iproute2 \
